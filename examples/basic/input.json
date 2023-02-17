@@ -1,0 +1,12 @@
+{
+  "pagerduty": {
+    "on_call": false
+  },
+  "group": "admins",
+  "approvals": [
+    {
+      "user": "chris@commonfate.io",
+      "groups": ["admins"]
+    }
+  ]
+}

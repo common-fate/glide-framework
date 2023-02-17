@@ -1,0 +1,3 @@
+*.png
+dist
+node_modules

@@ -1,0 +1,15 @@
+workflow:
+  on_call:
+    steps:
+      - start: request
+      - check: input.pagerduty.on_call
+      - outcome: approved
+
+  admin_approval:
+    steps:
+      - start: request
+      - action: approval
+        with:
+          groups:
+            - admins
+      - outcome: approved
