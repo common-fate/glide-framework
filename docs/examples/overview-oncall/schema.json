@@ -1,0 +1,15 @@
+{
+  "$id": "https://example.com/workflow.schema.json",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "pagerduty": {
+      "type": "object",
+      "properties": {
+        "on_call": {
+          "type": "boolean"
+        }
+      }
+    }
+  }
+}

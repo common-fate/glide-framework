@@ -1,0 +1,14 @@
+workflow:
+  many_approval_steps:
+    steps:
+      - start: request
+      - action: approval
+        with:
+          groups: [admins]
+      - action: approval
+        with:
+          groups: [admins]
+      - action: approval
+        with:
+          groups: [admins]
+      - outcome: approved

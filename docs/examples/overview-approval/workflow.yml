@@ -1,0 +1,8 @@
+workflow:
+  admin_approval:
+    steps:
+      - start: request
+      - action: approval
+        with:
+          groups: [admins]
+      - outcome: approved

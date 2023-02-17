@@ -5,10 +5,10 @@ import (
 	"os"
 
 	"github.com/common-fate/glide"
+	"github.com/common-fate/glide/pkg/dialect/cf"
 	"github.com/common-fate/glide/pkg/jsoncel"
 	"github.com/dominikbraun/graph/draw"
 	"github.com/urfave/cli/v2"
-	"gopkg.in/yaml.v3"
 )
 
 var Compile = cli.Command{
@@ -25,9 +25,7 @@ var Compile = cli.Command{
 		if err != nil {
 			return err
 		}
-		var prog glide.Program
-
-		err = yaml.Unmarshal(data, &prog)
+		prog, err := glide.Unmarshal(data, cf.Dialect)
 		if err != nil {
 			return err
 		}
@@ -44,7 +42,7 @@ var Compile = cli.Command{
 		}
 
 		compiler := glide.Compiler{
-			Program:     &prog,
+			Program:     prog,
 			InputSchema: &schema,
 		}
 

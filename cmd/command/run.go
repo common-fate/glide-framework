@@ -12,7 +12,6 @@ import (
 	"github.com/common-fate/glide/pkg/jsoncel"
 	"github.com/common-fate/glide/pkg/noderr"
 	"github.com/dominikbraun/graph/draw"
-	"github.com/goccy/go-yaml"
 	"github.com/urfave/cli/v2"
 )
 
@@ -33,10 +32,8 @@ var Run = cli.Command{
 			return err
 		}
 
-		p := glide.Program{}
-		ctx := glide.Use(c.Context, cf.Dialect)
+		p, err := glide.Unmarshal(data, cf.Dialect)
 
-		err = yaml.UnmarshalContext(ctx, data, &p)
 		var ne noderr.NodeError
 		if errors.As(err, &ne) {
 			clio.Infof("node error at: %s", ne.Node.GetPath())
@@ -74,7 +71,7 @@ var Run = cli.Command{
 		}
 
 		compiler := glide.Compiler{
-			Program:     &p,
+			Program:     p,
 			InputSchema: &schema,
 		}
 
@@ -121,7 +118,6 @@ var Run = cli.Command{
 			case glide.Active:
 				props.Attributes["fillcolor"] = "#89CFF0"
 			}
-
 		}
 
 		err = draw.DOT(g.G, os.Stdout)

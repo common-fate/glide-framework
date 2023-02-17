@@ -1,0 +1,7 @@
+workflow:
+  on_call:
+    steps:
+      - start: request
+      - check: input.pagerduty.on_call
+      - check: input.group == "admins"
+      - outcome: approved

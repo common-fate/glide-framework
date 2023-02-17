@@ -1,0 +1,8 @@
+{
+  "approvals": [
+    {
+      "user": "chris@commonfate.io",
+      "groups": ["admins"]
+    }
+  ]
+}

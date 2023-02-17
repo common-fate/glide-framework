@@ -271,7 +271,7 @@ workflow:
 // The AST nodes are only used for pretty-printing errors.
 func statementsEqual(t *testing.T, want *Program, got *Program) {
 	cleanedWorkflow := &Program{
-		Workflow: map[string]Pass{},
+		Workflow: map[string]Path{},
 	}
 
 	for passID, pass := range got.Workflow {
@@ -309,4 +309,42 @@ func TestUnmarshalNoContext(t *testing.T) {
 	want := "glide dialect must be defined in context using glide.Use()"
 
 	assert.EqualError(t, err, want)
+}
+
+// Check that the unmarshalling wrapper function
+// glide.Unmarshal() works as expected.
+func TestUnmarshalWrapper(t *testing.T) {
+	type args struct {
+		data    []byte
+		dialect dialect.Dialect
+	}
+	tests := []struct {
+		name    string
+		args    args
+		want    *Program
+		wantErr bool
+	}{
+		{
+			name: "ok",
+			args: args{
+				data: []byte(`
+workflow:
+  test:
+    steps:
+      - start: A
+`),
+			},
+			want: NewProgram().Pass("test", s.Start("A")),
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := Unmarshal(tt.args.data, tt.args.dialect)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("UnmarshalA() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			statementsEqual(t, tt.want, got)
+		})
+	}
 }

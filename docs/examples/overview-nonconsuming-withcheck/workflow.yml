@@ -1,0 +1,18 @@
+workflow:
+  many_approval_steps:
+    steps:
+      - start: request
+      - action: approval
+        with:
+          groups: [admins]
+      - action: approval
+        with:
+          groups: [admins]
+      - action: approval
+        with:
+          groups: [admins]
+
+      # add a check for the count of approvals
+      - check: size(input.approvals) > 3
+
+      - outcome: approved

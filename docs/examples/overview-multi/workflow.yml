@@ -1,0 +1,12 @@
+workflow:
+  two_approvals:
+    steps:
+      - start: request
+      - and:
+          - action: approval
+            with:
+              groups: [admins]
+          - action: approval
+            with:
+              groups: [ops]
+      - outcome: approved

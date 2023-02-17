@@ -15,7 +15,7 @@ import (
 
 // Program is a Glide workflow definition.
 type Program struct {
-	Workflow map[string]Pass
+	Workflow map[string]Path
 }
 
 func (p *Program) UnmarshalYAML(ctx context.Context, b []byte) error {
@@ -26,7 +26,7 @@ func (p *Program) UnmarshalYAML(ctx context.Context, b []byte) error {
 	}
 
 	if p.Workflow == nil {
-		p.Workflow = map[string]Pass{}
+		p.Workflow = map[string]Path{}
 	}
 
 	var tmp struct {
@@ -43,7 +43,7 @@ func (p *Program) UnmarshalYAML(ctx context.Context, b []byte) error {
 			continue
 		}
 
-		pass := Pass{id: id}
+		pass := Path{id: id}
 
 		// set up a new decoder. Usually we'd provide the bytes to be
 		// read in the buffer, but because we're only using
@@ -62,16 +62,16 @@ func (p *Program) UnmarshalYAML(ctx context.Context, b []byte) error {
 	return nil
 }
 
-// Pass is a group of statements.
+// Path is a group of statements.
 // Each pass in a Glide program builds the workflow graph from
 // Start nodes to End nodes.
-type Pass struct {
+type Path struct {
 	id    string
 	Steps []step.Step
 	// Node  ast.Node
 }
 
-func (p *Pass) UnmarshalYAML(ctx context.Context, b []byte) error {
+func (p *Path) UnmarshalYAML(ctx context.Context, b []byte) error {
 	// validate the dialect
 	d, ok := dialect.FromContext(ctx)
 	if !ok {
@@ -142,12 +142,12 @@ func SimpleProgram(statements ...step.Step) *Program {
 }
 
 func NewProgram() *Program {
-	return &Program{Workflow: map[string]Pass{}}
+	return &Program{Workflow: map[string]Path{}}
 }
 
 // Pass adds a pass to the workflow. Used to build test Programs.
 func (p *Program) Pass(name string, statements ...step.Step) *Program {
-	pass := Pass{id: name}
+	pass := Path{id: name}
 
 	for _, s := range statements {
 		s = setPass(s, name)
