@@ -140,3 +140,5 @@ if errors.As(err, &ne) {
   fmt.Fprintf(os.Stderr, "%s\n", source)
 }
 ```
+
+[Back to README](/README.md)

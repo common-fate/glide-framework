@@ -84,3 +84,5 @@ The `Something` action will be constructed with `Foo = bar`, e.g.
 ```go
 Something{Foo: "bar"}
 ```
+
+[Back to README](/README.md)
