@@ -1,5 +1,11 @@
 package jsoncel
 
+import (
+	"bytes"
+	"encoding/json"
+	"reflect"
+)
+
 // Version is the JSON Schema version.
 var Version = "https://json-schema.org/draft/2020-12/schema"
 
@@ -72,8 +78,15 @@ type Schema struct {
 	Extras map[string]interface{} `json:"-"`
 
 	// Special boolean representation of the Schema - section 4.3.2
-	// boolean *bool
+	boolean *bool
 }
+
+var (
+	// TrueSchema defines a schema with a true value
+	TrueSchema = &Schema{boolean: &[]bool{true}[0]}
+	// FalseSchema defines a schema with a false value
+	FalseSchema = &Schema{boolean: &[]bool{false}[0]}
+)
 
 type FieldType string
 
@@ -86,3 +99,52 @@ const (
 	String  FieldType = "string"
 	Integer FieldType = "integer"
 )
+
+// UnmarshalJSON is used to parse a schema object or boolean.
+func (t *Schema) UnmarshalJSON(data []byte) error {
+	if bytes.Equal(data, []byte("true")) {
+		*t = *TrueSchema
+		return nil
+	} else if bytes.Equal(data, []byte("false")) {
+		*t = *FalseSchema
+		return nil
+	}
+	type Schema_ Schema
+	aux := &struct {
+		*Schema_
+	}{
+		Schema_: (*Schema_)(t),
+	}
+	return json.Unmarshal(data, aux)
+}
+
+func (t *Schema) MarshalJSON() ([]byte, error) {
+	if t.boolean != nil {
+		if *t.boolean {
+			return []byte("true"), nil
+		} else {
+			return []byte("false"), nil
+		}
+	}
+	if reflect.DeepEqual(&Schema{}, t) {
+		// Don't bother returning empty schemas
+		return []byte("true"), nil
+	}
+	type Schema_ Schema
+	b, err := json.Marshal((*Schema_)(t))
+	if err != nil {
+		return nil, err
+	}
+	if t.Extras == nil || len(t.Extras) == 0 {
+		return b, nil
+	}
+	m, err := json.Marshal(t.Extras)
+	if err != nil {
+		return nil, err
+	}
+	if len(b) == 2 {
+		return m, nil
+	}
+	b[len(b)-1] = ','
+	return append(b, m[1:]...), nil
+}
