@@ -148,3 +148,10 @@ func (t *Schema) MarshalJSON() ([]byte, error) {
 	b[len(b)-1] = ','
 	return append(b, m[1:]...), nil
 }
+
+func (s *Schema) IsTrue() bool {
+	if s.boolean == nil {
+		return false
+	}
+	return *s.boolean
+}
