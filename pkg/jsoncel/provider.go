@@ -101,6 +101,16 @@ func (p *Provider) FindType(typeName string) (*exprpb.Type, bool) {
 		case Boolean:
 			return decls.Bool, true
 		case Object:
+			// if the 'AdditionalProperties' field is set,
+			// we can't enforce compile time type checking
+			// for child keys in this type.
+			//
+			// e.g. {"tags": {"prod": true}}
+			// we don't know whether tags.prod
+			// will exist or not at compile time.
+			if f.AdditionalProperties != nil && f.AdditionalProperties.IsTrue() {
+				return decls.Any, true
+			}
 			return decls.NewObjectType(typeName), true
 		case Array:
 			return decls.NewListType(decls.String), true
